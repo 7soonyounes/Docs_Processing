@@ -286,6 +286,7 @@
 
 // This keep track of one rect
 import React, { useState, useRef, useEffect } from "react";
+import axios from 'axios';
 
 const AddTemplate = () => {
   const [drawing, setDrawing] = useState(false);
@@ -297,6 +298,7 @@ const AddTemplate = () => {
   const [currentField, setCurrentField] = useState(null);
   const scaleFactorRef = useRef(1);
   const [deleteRec, setDeleteRec] = useState(false);
+  const [templateName, setTemplateName] = useState('');
 
   useEffect(() => {
     if (image && canvasRef.current) {
@@ -319,7 +321,7 @@ const AddTemplate = () => {
 
   useEffect(() => {
     if (drawing || deleteRec) {
-      console.log("drawing");
+      // console.log("drawing");
       drawRectangle();
     }
   }, [drawing, endPos, fields, deleteRec]);
@@ -332,7 +334,7 @@ const AddTemplate = () => {
     ctx.strokeStyle = "red";
     ctx.lineWidth = 2;
 
-    console.log(fields, "fields");
+    // console.log(fields, "fields");
     await fields.forEach((field) => {
       ctx.strokeRect(field.x, field.y, field.w, field.h);
     });
@@ -407,14 +409,30 @@ const AddTemplate = () => {
     setDeleteRec(true);
   };
 
-  const handleSaveFields = () => {
-    const formattedData = fields.map((field) => [
-      field.name,
-      `(${field.x},${field.y},${field.w},${field.h})`,
-    ]);
+  const handleSaveFields = async () => {
+    const formattedData = fields.map((field) => ({
+        name: field.name,
+        x: field.x,
+        y: field.y,
+        w: field.w,
+        h: field.h
+    }));
+
     console.log(formattedData);
-    // Implement saving logic here
-  };
+
+    const formData = new FormData();
+    formData.append('name', templateName);  
+    formData.append('templateImage', image);  
+
+    formData.append('OCRLocations', JSON.stringify(formattedData));
+
+    try {
+        const response = await axios.post('http://127.0.0.1:8000/save-template/', formData);
+        console.log('Data saved successfully:', response.data);
+    } catch (error) {
+        console.error('Error occurred while saving data:', error);
+    }
+};
 
   return (
     <div>
@@ -431,9 +449,15 @@ const AddTemplate = () => {
         />
       )}
 
+      <input
+        type="text"
+        placeholder="Enter Template Name"
+        value={templateName}
+        onChange={(e) => setTemplateName(e.target.value)}
+      />
+
       {fields.map((field, index) => (
         <div key={index}>
-          <div>Field Name:</div>
           <input
             type="text"
             placeholder="Field Name"

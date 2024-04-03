@@ -4,22 +4,22 @@ import cv2
 from collections import namedtuple
 from paddleocr import PaddleOCR
 # Define OCRLocation namedtuple
-OCRLocation = namedtuple("OCRLocation", ["id", "bbox", "filter_keywords"])
+OCRLocation = namedtuple("OCRLocation", ["id", "bbox"])
 
 # Define OCR locations for attestation template
 OCR_LOCATIONS_ATT = [
-    OCRLocation("Name", (180, 676, 378 - 180, 694 - 676), ["Mr"]),
-    OCRLocation("Agence", (504, 656, 619 - 504, 672 - 656), []),
-    OCRLocation("Date", (327, 654, 409 - 327, 670 - 654), []),
-    OCRLocation("RIB", (181, 573, 750 - 181, 600 - 573), ['[', ']'])
+    OCRLocation("Name", (180, 676, 378 - 180, 694 - 676)),
+    OCRLocation("Agence", (504, 656, 619 - 504, 672 - 656)),
+    OCRLocation("Date", (327, 654, 409 - 327, 670 - 654)),
+    OCRLocation("RIB", (181, 573, 750 - 181, 600 - 573))
 ]
 
 # Define OCR locations for fiche template
 OCR_LOCATIONS_FICHE = [
-    OCRLocation("Nom", (413, 342, 1190 - 413, 422 - 342), []),
-    OCRLocation("Prenom", (413, 432, 1190 - 413, 512 - 432), []),
-    OCRLocation("Adresse", (291, 510, 1200 - 291, 610 - 510), []),
-    OCRLocation("NUM", (315, 635, 1200 - 315, 721 - 635), [])
+    OCRLocation("Nom", (413, 342, 1190 - 413, 422 - 342)),
+    OCRLocation("Prenom", (413, 432, 1190 - 413, 512 - 432)),
+    OCRLocation("Adresse", (291, 510, 1200 - 291, 610 - 510)),
+    OCRLocation("NUM", (315, 635, 1200 - 315, 721 - 635))
 ]
 
 np.int = np.int32

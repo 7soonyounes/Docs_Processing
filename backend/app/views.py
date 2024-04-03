@@ -6,6 +6,15 @@ import cv2
 from .alignment_and_ocr import align_images, perform_ocr, OCR_LOCATIONS_ATT, OCR_LOCATIONS_FICHE
 import os
 import numpy as np 
+from django.shortcuts import render
+from django.views.generic import View
+from django.http import JsonResponse
+from django.views import View
+from .models import Template, TemplateField
+import json
+
+
+
 
 @csrf_exempt
 def process_image(request):
@@ -26,21 +35,34 @@ def process_image(request):
             else:
                 return JsonResponse({'error': 'Invalid template selected'})
 
-            # Read the image file
             image_data = uploaded_file.read()
             nparr = np.frombuffer(image_data, np.uint8)
             image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
 
-            # Perform image alignment
             aligned_image = align_images(image, template_path)
 
-            # Perform OCR
             ocr_results = perform_ocr(aligned_image, ocr_locations)
-
-            # You can further process ocr_results as needed
-
             return JsonResponse({'success': True, 'ocr_results': ocr_results})
         except KeyError as e:
             return JsonResponse({'error': str(e)})
     else:
         return JsonResponse({'error': 'Invalid request method'})
+
+@csrf_exempt
+def save_template_view(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        image = request.FILES.get('templateImage')
+        fields = json.loads(request.POST.get('fields'))
+
+        template = Template(name=name, image=image)
+        template.save()
+
+        # Save fields
+        for field_data in fields:
+            template_field = TemplateField(template=template, **field_data)
+            template_field.save()
+
+        return JsonResponse({'success': True})
+    else:
+        return JsonResponse({'error': 'Only POST requests are allowed'})
