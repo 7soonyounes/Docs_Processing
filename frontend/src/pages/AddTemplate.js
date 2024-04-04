@@ -286,7 +286,7 @@
 
 // This keep track of one rect
 import React, { useState, useRef, useEffect } from "react";
-import axios from 'axios';
+import axios from "axios";
 
 const AddTemplate = () => {
   const [drawing, setDrawing] = useState(false);
@@ -294,11 +294,12 @@ const AddTemplate = () => {
   const [endPos, setEndPos] = useState({ x: 0, y: 0 });
   const canvasRef = useRef(null);
   const [image, setImage] = useState(null);
+  const [temp, setTemp] = useState(null);
   const [fields, setFields] = useState([]);
   const [currentField, setCurrentField] = useState(null);
   const scaleFactorRef = useRef(1);
   const [deleteRec, setDeleteRec] = useState(false);
-  const [templateName, setTemplateName] = useState('');
+  const [templateName, setTemplateName] = useState("");
 
   useEffect(() => {
     if (image && canvasRef.current) {
@@ -339,10 +340,11 @@ const AddTemplate = () => {
       ctx.strokeRect(field.x, field.y, field.w, field.h);
     });
     setDeleteRec(false);
-    if(drawing){
-    const width = endPos.x - startPos.x;
-    const height = endPos.y - startPos.y;
-    ctx.strokeRect(startPos.x, startPos.y, width, height);}
+    if (drawing) {
+      const width = endPos.x - startPos.x;
+      const height = endPos.y - startPos.y;
+      ctx.strokeRect(startPos.x, startPos.y, width, height);
+    }
   };
 
   const handleMouseDown = (e) => {
@@ -387,12 +389,13 @@ const AddTemplate = () => {
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     const reader = new FileReader();
+    setTemp(file);
 
     reader.onload = () => {
       const img = new Image();
       img.onload = () => {
         setImage(img);
-        setFields([]); // Reset fields when a new image is uploaded
+        setFields([]);
       };
       img.src = reader.result;
     };
@@ -411,28 +414,33 @@ const AddTemplate = () => {
 
   const handleSaveFields = async () => {
     const formattedData = fields.map((field) => ({
-        name: field.name,
-        x: field.x,
-        y: field.y,
-        w: field.w,
-        h: field.h
+      name: field.name,
+      x: field.x,
+      y: field.y,
+      width: field.w,
+      height: field.h,
     }));
-
-    console.log(formattedData);
-
+  
     const formData = new FormData();
-    formData.append('name', templateName);  
-    formData.append('templateImage', image);  
-
-    formData.append('OCRLocations', JSON.stringify(formattedData));
-
+    formData.append("name", templateName);
+    formData.append("templateImage", temp); 
+    formData.append("OCRLocations", JSON.stringify(formattedData));
+  
     try {
-        const response = await axios.post('http://127.0.0.1:8000/save-template/', formData);
-        console.log('Data saved successfully:', response.data);
+      const response = await axios.post(
+        "http://127.0.0.1:8000/save-template/",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      console.log("Data saved successfully:", response.data);
     } catch (error) {
-        console.error('Error occurred while saving data:', error);
+      console.error("Error occurred while saving data:", error);
     }
-};
+  };
 
   return (
     <div>
