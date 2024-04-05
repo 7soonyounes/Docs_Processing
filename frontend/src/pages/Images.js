@@ -68,31 +68,31 @@ function Images() {
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          borderBottom: "1px solid #51514f",
+          borderBottom: "2px solid #ccc",
         }}
       >
         <div
-          className="gg-home"
+          class="gg-home"
           style={{
             fontWeight: "bold",
             color: "#51514f",
             fontSize: "17px",
-            marginLeft: "50px",
+            marginLeft: "20px",
           }}
         >
-          Images
+          BCP Technologies
         </div>
         <div>
           <a
-            href="/images"
+            href="/Accueil"
             style={{
-              color: "#091b1a",
+              color: "#51514f",
               fontWeight: "bold",
               marginLeft: "20px",
               marginRight: "20px",
               textDecoration: "none",
             }}
-          ></a>
+          >back</a>
         </div>
       </header>
       <div style={{ display: "flex", flex: 1 }}>
@@ -199,7 +199,8 @@ function Images() {
                   borderRadius: "5px",
                 }}
               >
-                <button
+                <a
+                  href="/Addtemplate"
                   style={{
                     backgroundColor: "transparent",
                     color: "#fff",
@@ -209,10 +210,11 @@ function Images() {
                     width: "100%",
                     textAlign: "center",
                     fontWeight: "bold",
+                    textDecoration: "none",
                   }}
                 >
                   Add Template
-                </button>
+                </a>
               </li>
             </ul>
           </form>

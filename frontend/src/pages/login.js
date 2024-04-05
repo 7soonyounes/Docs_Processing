@@ -48,6 +48,7 @@ function Login() {
               />
             </div>
             <button type="submit" style={{ width: '100%', padding: '10px', backgroundColor: '#51514f', fontSize: '1em', fontWeight: 'bold', color :'#fff', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>Login</button>
+            {/* <a href="/images"style={{ width: '100%', padding: '10px', backgroundColor: '#51514f', fontSize: '1em', fontWeight: 'bold', color :'#fff', border: 'none', borderRadius: '8px', cursor: 'pointer' }} >Login</a> */}
           </form>
         </div>
       </div>

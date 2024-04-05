@@ -311,7 +311,7 @@ const AddTemplate = () => {
         maxCanvasWidth / image.width,
         maxCanvasHeight / image.height
       );
-      scaleFactorRef.current = scaleFactor; // Store scaling factor in ref
+      scaleFactorRef.current = scaleFactor; 
       const scaledWidth = image.width * scaleFactor;
       const scaledHeight = image.height * scaleFactor;
       canvas.width = scaledWidth;
@@ -443,9 +443,42 @@ const AddTemplate = () => {
   };
 
   return (
-    <div>
-      <input type="file" onChange={handleImageUpload} />
-      {image && (
+    <div style={{ backgroundColor: '#E5e5e5', color: '#fff', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+      <header style={{ backgroundColor: '#fff', padding: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #51514f' }}>
+        <div style={{ fontWeight: 'bold', color: '#51514f', fontSize: '17px', marginLeft: '50px' }}>Images</div>
+        <div>
+          <a href="/images" style={{ color: '"#51514f"', fontWeight: 'bold', marginLeft: '20px', marginRight: '20px', textDecoration: 'none' }}>Images</a>
+        </div>
+      </header>
+      <div style={{ display: 'flex', flex: 1 }}>
+        <aside style={{ flex: '0 0 200px', backgroundColor: '#E5e5e5', padding: '20px', borderRight: '1px solid #51514f' }}>
+          <form>
+            <ul style={{ listStyleType: 'none', padding: 0 }}>
+              <li style={{ marginBottom: '20px', backgroundColor: '#fff', padding: '10px', borderRadius: '5px' }}>
+                <label htmlFor="image" style={{ backgroundColor: 'transparent', color: '#51514f', border: 'none', cursor: 'pointer', display: 'block', width: '100%', textAlign: 'center' }}>Upload Image</label>
+                <input type="file" id="image" accept="image/*" onChange={handleImageUpload} style={{ display: 'none' }} />
+              </li>
+              <li style={{ marginBottom: '20px', backgroundColor: '#fff', padding: '10px', borderRadius: '5px' }}>
+                <input type="text" placeholder="Template Name" value={templateName} onChange={(e) => setTemplateName(e.target.value)} />
+              </li>
+              {fields.map((field, index) => (
+                <li key={index} style={{ marginBottom: '20px', backgroundColor: '#fff', padding: '10px', borderRadius: '5px' }}>
+                  <input type="text" placeholder="Field Name" value={field.name || ''} onChange={(e) => {
+                    const updatedFields = [...fields];
+                    updatedFields[index].name = e.target.value;
+                    setFields(updatedFields);
+                  }} />
+                  <button onClick={() => handleDeleteField(index)}>Delete</button>
+                </li>
+              ))}
+              <li style={{ marginBottom: '20px', backgroundColor: '#854e56', padding: '10px', borderRadius: '5px' }}>
+                <button onClick={handleSaveFields} style={{ backgroundColor: 'transparent', color: '#fff', border: 'none', cursor: 'pointer', display: 'block', width: '100%', textAlign: 'center', fontWeight: 'bold' }}>Save Fields</button>
+              </li>
+            </ul>
+          </form>
+        </aside>
+        <main style={{ flex: 1, padding: '70px', display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
+        {image && (
         <canvas
           ref={canvasRef}
           width={800}
@@ -456,33 +489,9 @@ const AddTemplate = () => {
           style={{ border: "1px solid black" }}
         />
       )}
-
-      <input
-        type="text"
-        placeholder="Enter Template Name"
-        value={templateName}
-        onChange={(e) => setTemplateName(e.target.value)}
-      />
-
-      {fields.map((field, index) => (
-        <div key={index}>
-          <input
-            type="text"
-            placeholder="Field Name"
-            value={field.name || ""}
-            onChange={(e) => {
-              const updatedFields = [...fields];
-              updatedFields[index].name = e.target.value;
-              setFields(updatedFields);
-            }}
-          />
-          <button onClick={() => handleDeleteField(index)}>Delete</button>
-        </div>
-      ))}
-
-      <button onClick={handleSaveFields}>Save Fields</button>
+        </main>
+      </div>
     </div>
   );
 };
-
 export default AddTemplate;
