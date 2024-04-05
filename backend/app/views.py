@@ -1,5 +1,3 @@
-# app/views.py
-
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import cv2
@@ -18,7 +16,6 @@ def process_image(request):
             uploaded_file = request.FILES['image']
             selected_template_name = request.POST.get('template')
             selected_template = Template.objects.get(name=selected_template_name)
-            # template_path = selected_template.template_path
             template_path = os.path.join(settings.BASE_DIR, 'static', 'templates', 'template1.jpeg') 
             
             image_data = uploaded_file.read()

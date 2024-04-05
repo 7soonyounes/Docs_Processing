@@ -1,4 +1,3 @@
-// PageLayout.js
 import React from 'react';
 
 const PageLayout = ({ children }) => {

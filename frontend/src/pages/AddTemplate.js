@@ -305,8 +305,8 @@ const AddTemplate = () => {
     if (image && canvasRef.current) {
       const canvas = canvasRef.current;
       const ctx = canvas.getContext("2d");
-      const maxCanvasWidth = 800; // Maximum width for the canvas
-      const maxCanvasHeight = 600; // Maximum height for the canvas
+      const maxCanvasWidth = 800; 
+      const maxCanvasHeight = 600; 
       const scaleFactor = Math.min(
         maxCanvasWidth / image.width,
         maxCanvasHeight / image.height
@@ -327,46 +327,56 @@ const AddTemplate = () => {
     }
   }, [drawing, endPos, fields, deleteRec]);
 
-  const drawRectangle = async () => {
+  const drawRectangle = () => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
-    // ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
     ctx.strokeStyle = "red";
     ctx.lineWidth = 2;
-
-    // console.log(fields, "fields");
-    await fields.forEach((field) => {
+  
+    fields.forEach((field) => {
       ctx.strokeRect(field.x, field.y, field.w, field.h);
     });
-    setDeleteRec(false);
+  
+
     if (drawing) {
-      const width = endPos.x - startPos.x;
-      const height = endPos.y - startPos.y;
-      ctx.strokeRect(startPos.x, startPos.y, width, height);
+      const scaleFactor = scaleFactorRef.current;
+      const startX = startPos.x * scaleFactor;
+      const startY = startPos.y * scaleFactor;
+      const endX = endPos.x * scaleFactor;
+      const endY = endPos.y * scaleFactor;
+      const width = Math.abs(endX - startX);
+      const height = Math.abs(endY - startY);
+      ctx.strokeRect(startX, startY, width, height);
     }
   };
 
   const handleMouseDown = (e) => {
     const canvas = canvasRef.current;
     const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+    const scaleFactor = scaleFactorRef.current;
+    const x = (e.clientX - rect.left) / scaleFactor;
+    const y = (e.clientY - rect.top) / scaleFactor; 
     setStartPos({ x, y });
     setEndPos({ x, y });
     setDrawing(true);
     setCurrentField({ x, y, w: 0, h: 0 });
   };
-
+  
   const handleMouseMove = (e) => {
     if (drawing) {
       const canvas = canvasRef.current;
       const rect = canvas.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
+      const scaleFactor = scaleFactorRef.current;
+      const x = (e.clientX - rect.left) / scaleFactor; 
+      const y = (e.clientY - rect.top) / scaleFactor; 
+      
       setEndPos({ x, y });
-      const width = Math.abs(x - currentField.x);
-      const height = Math.abs(y - currentField.y);
+  
+      const width = Math.abs(x - startPos.x);
+      const height = Math.abs(y - startPos.y);
+
       setCurrentField({ ...currentField, w: width, h: height });
     }
   };
@@ -447,7 +457,7 @@ const AddTemplate = () => {
       <header style={{ backgroundColor: '#fff', padding: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #51514f' }}>
         <div style={{ fontWeight: 'bold', color: '#51514f', fontSize: '17px', marginLeft: '50px' }}>Images</div>
         <div>
-          <a href="/images" style={{ color: '"#51514f"', fontWeight: 'bold', marginLeft: '20px', marginRight: '20px', textDecoration: 'none' }}>Images</a>
+          <a href="/images" style={{ color: '#091b1a', fontWeight: 'bold', marginLeft: '20px', marginRight: '20px', textDecoration: 'none' }}>Images</a>
         </div>
       </header>
       <div style={{ display: 'flex', flex: 1 }}>

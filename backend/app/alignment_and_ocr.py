@@ -1,5 +1,3 @@
-# app/alignment_and_ocr.py
-from collections import namedtuple
 from paddleocr import PaddleOCR
 import numpy as np
 import cv2
