@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Link } from 'react-router-dom';
+// import { Link } from 'react-router-dom';
 import '../styles/feature.css'
 import Typed from 'typed.js'; 
 
@@ -19,7 +19,7 @@ function Accueil() {
       }, []); 
     return (
         <div style={{ backgroundColor: '#E5e5e5', color: '#fff', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-    <header style={{ backgroundColor: '#fff', padding: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '2px solid #ccc' }}>
+    <header style={{ backgroundColor: '#fff', padding: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #ccc' }}>
         <div class="gg-home" style={{ fontWeight: 'bold', color: '#51514f', fontSize: '17px', marginLeft: '20px' }}>Home</div>
         <div>
             <a href="/images" style={{ color: '#091b1a', fontWeight: 'bold', marginLeft: '20px', marginRight: '20px', textDecoration: 'none' }}></a>

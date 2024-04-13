@@ -68,7 +68,7 @@ function Images() {
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          borderBottom: "2px solid #ccc",
+          borderBottom: "1px solid #ccc",
         }}
       >
         <div
@@ -92,7 +92,9 @@ function Images() {
               marginRight: "20px",
               textDecoration: "none",
             }}
-          >back</a>
+          >
+            back
+          </a>
         </div>
       </header>
       <div style={{ display: "flex", flex: 1 }}>
@@ -101,7 +103,7 @@ function Images() {
             flex: "0 0 200px",
             backgroundColor: "#E5e5e5",
             padding: "20px",
-            borderRight: "1px solid #51514f",
+            borderRight: "1px solid #ccc",
           }}
         >
           <form onSubmit={handleSubmit}>
@@ -124,6 +126,7 @@ function Images() {
                     display: "block",
                     width: "100%",
                     textAlign: "center",
+                    fontSize: "12px",
                   }}
                 >
                   Upload Image
@@ -156,6 +159,7 @@ function Images() {
                     display: "block",
                     width: "100%",
                     textAlign: "center",
+                    fontSize: "12px",
                   }}
                 >
                   <option value="">Select Template</option>
@@ -185,6 +189,7 @@ function Images() {
                     width: "100%",
                     textAlign: "center",
                     fontWeight: "bold",
+                    fontSize: "12px",
                   }}
                 >
                   Process Image
@@ -211,6 +216,7 @@ function Images() {
                     textAlign: "center",
                     fontWeight: "bold",
                     textDecoration: "none",
+                    fontSize: "12px",
                   }}
                 >
                   Add Template

@@ -305,13 +305,13 @@ const AddTemplate = () => {
     if (image && canvasRef.current) {
       const canvas = canvasRef.current;
       const ctx = canvas.getContext("2d");
-      const maxCanvasWidth = 800; 
-      const maxCanvasHeight = 600; 
+      const maxCanvasWidth = 800;
+      const maxCanvasHeight = 600;
       const scaleFactor = Math.min(
         maxCanvasWidth / image.width,
         maxCanvasHeight / image.height
       );
-      scaleFactorRef.current = scaleFactor; 
+      scaleFactorRef.current = scaleFactor;
       const scaledWidth = image.width * scaleFactor;
       const scaledHeight = image.height * scaleFactor;
       canvas.width = scaledWidth;
@@ -332,13 +332,12 @@ const AddTemplate = () => {
     const ctx = canvas.getContext("2d");
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
-    ctx.strokeStyle = "red";
+    ctx.strokeStyle = "#77F857";
     ctx.lineWidth = 2;
-  
+
     fields.forEach((field) => {
       ctx.strokeRect(field.x, field.y, field.w, field.h);
     });
-  
 
     if (drawing) {
       const scaleFactor = scaleFactorRef.current;
@@ -357,23 +356,23 @@ const AddTemplate = () => {
     const rect = canvas.getBoundingClientRect();
     const scaleFactor = scaleFactorRef.current;
     const x = (e.clientX - rect.left) / scaleFactor;
-    const y = (e.clientY - rect.top) / scaleFactor; 
+    const y = (e.clientY - rect.top) / scaleFactor;
     setStartPos({ x, y });
     setEndPos({ x, y });
     setDrawing(true);
     setCurrentField({ x, y, w: 0, h: 0 });
   };
-  
+
   const handleMouseMove = (e) => {
     if (drawing) {
       const canvas = canvasRef.current;
       const rect = canvas.getBoundingClientRect();
       const scaleFactor = scaleFactorRef.current;
-      const x = (e.clientX - rect.left) / scaleFactor; 
-      const y = (e.clientY - rect.top) / scaleFactor; 
-      
+      const x = (e.clientX - rect.left) / scaleFactor;
+      const y = (e.clientY - rect.top) / scaleFactor;
+
       setEndPos({ x, y });
-  
+
       const width = Math.abs(x - startPos.x);
       const height = Math.abs(y - startPos.y);
 
@@ -430,12 +429,12 @@ const AddTemplate = () => {
       width: field.w,
       height: field.h,
     }));
-  
+
     const formData = new FormData();
     formData.append("name", templateName);
-    formData.append("templateImage", temp); 
+    formData.append("templateImage", temp);
     formData.append("OCRLocations", JSON.stringify(formattedData));
-  
+
     try {
       const response = await axios.post(
         "http://127.0.0.1:8000/save-template/",
@@ -453,52 +452,183 @@ const AddTemplate = () => {
   };
 
   return (
-    <div style={{ backgroundColor: '#E5e5e5', color: '#fff', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <header style={{ backgroundColor: '#fff', padding: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #51514f' }}>
-        <div style={{ fontWeight: 'bold', color: '#51514f', fontSize: '17px', marginLeft: '50px' }}>Images</div>
+    <div
+      style={{
+        backgroundColor: "#E5e5e5",
+        color: "#fff",
+        minHeight: "100vh",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
+      <header
+        style={{
+          backgroundColor: "#fff",
+          padding: "10px",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          borderBottom: "1px solid #ccc",
+        }}
+      >
+        <div
+          style={{
+            fontWeight: "bold",
+            color: "#51514f",
+            fontSize: "17px",
+            marginLeft: "20px",
+          }}
+        >
+          BCP Technologies
+        </div>
         <div>
-          <a href="/images" style={{ color: '#091b1a', fontWeight: 'bold', marginLeft: '20px', marginRight: '20px', textDecoration: 'none' }}>Images</a>
+          <a
+            href="/images"
+            style={{
+              color: "#51514f",
+              fontWeight: "bold",
+              marginLeft: "20px",
+              marginRight: "20px",
+              textDecoration: "none",
+            }}
+          >
+            Images
+          </a>
         </div>
       </header>
-      <div style={{ display: 'flex', flex: 1 }}>
-        <aside style={{ flex: '0 0 200px', backgroundColor: '#E5e5e5', padding: '20px', borderRight: '1px solid #51514f' }}>
+      <div style={{ display: "flex", flex: 1 }}>
+        <aside
+          style={{
+            flex: "0 0 200px",
+            backgroundColor: "#E5e5e5",
+            padding: "20px",
+            borderRight: "1px solid #ccc",
+          }}
+        >
           <form>
-            <ul style={{ listStyleType: 'none', padding: 0 }}>
-              <li style={{ marginBottom: '20px', backgroundColor: '#fff', padding: '10px', borderRadius: '5px' }}>
-                <label htmlFor="image" style={{ backgroundColor: 'transparent', color: '#51514f', border: 'none', cursor: 'pointer', display: 'block', width: '100%', textAlign: 'center' }}>Upload Image</label>
-                <input type="file" id="image" accept="image/*" onChange={handleImageUpload} style={{ display: 'none' }} />
+            <ul style={{ listStyleType: "none", padding: 0 }}>
+              <li
+                style={{
+                  marginBottom: "20px",
+                  backgroundColor: "#fff",
+                  padding: "10px",
+                  borderRadius: "5px",
+                }}
+              >
+                <label
+                  htmlFor="image"
+                  style={{
+                    backgroundColor: "transparent",
+                    color: "#51514f",
+                    border: "none",
+                    cursor: "pointer",
+                    display: "block",
+                    width: "100%",
+                    textAlign: "center",
+                    fontSize: "12px",
+                  }}
+                >
+                  Upload Image
+                </label>
+                <input
+                  type="file"
+                  id="image"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  style={{ display: "none" }}
+                />
               </li>
-              <li style={{ marginBottom: '20px', backgroundColor: '#fff', padding: '10px', borderRadius: '5px' }}>
-                <input type="text" placeholder="Template Name" value={templateName} onChange={(e) => setTemplateName(e.target.value)} />
+              <li
+                style={{
+                  marginBottom: "20px",
+                  backgroundColor: "#fff",
+                  padding: "10px",
+                  borderRadius: "5px",
+                  border: "none",
+                }}
+              >
+                <input
+                  type="text"
+                  placeholder="Template Name"
+                  value={templateName}
+                  onChange={(e) => setTemplateName(e.target.value)}
+                  style={{ border: "none", outline: "none", fontSize: "12px", }}
+                />
               </li>
               {fields.map((field, index) => (
-                <li key={index} style={{ marginBottom: '20px', backgroundColor: '#fff', padding: '10px', borderRadius: '5px' }}>
-                  <input type="text" placeholder="Field Name" value={field.name || ''} onChange={(e) => {
-                    const updatedFields = [...fields];
-                    updatedFields[index].name = e.target.value;
-                    setFields(updatedFields);
-                  }} />
-                  <button onClick={() => handleDeleteField(index)}>Delete</button>
+                <li
+                  key={index}
+                  style={{
+                    marginBottom: "20px",
+                    backgroundColor: "#fff",
+                    padding: "10px",
+                    borderRadius: "5px",
+                  }}
+                >
+                 <input
+  type="text"
+  placeholder="Field Name"
+  value={field.name || ""}
+  onChange={(e) => {
+    const updatedFields = [...fields];
+    updatedFields[index].name = e.target.value;
+    setFields(updatedFields);
+  }}
+  style={{ border: 'none', outline: 'none',fontSize: "12px", }}
+/>
+                  <button onClick={() => handleDeleteField(index)}>
+                   Delete
+                  </button>
                 </li>
               ))}
-              <li style={{ marginBottom: '20px', backgroundColor: '#854e56', padding: '10px', borderRadius: '5px' }}>
-                <button onClick={handleSaveFields} style={{ backgroundColor: 'transparent', color: '#fff', border: 'none', cursor: 'pointer', display: 'block', width: '100%', textAlign: 'center', fontWeight: 'bold' }}>Save Fields</button>
+              <li
+                style={{
+                  marginBottom: "20px",
+                  backgroundColor: "#854e56",
+                  padding: "10px",
+                  borderRadius: "5px",
+                }}
+              >
+                <button
+                  onClick={handleSaveFields}
+                  style={{
+                    backgroundColor: "transparent",
+                    color: "#fff",
+                    border: "none",
+                    cursor: "pointer",
+                    display: "block",
+                    width: "100%",
+                    textAlign: "center",
+                    fontWeight: "bold",
+                    fontSize: "12px",
+                  }}
+                >
+                  Save Fields
+                </button>
               </li>
             </ul>
           </form>
         </aside>
-        <main style={{ flex: 1, padding: '70px', display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
-        {image && (
-        <canvas
-          ref={canvasRef}
-          width={800}
-          height={600}
-          onMouseDown={handleMouseDown}
-          onMouseMove={handleMouseMove}
-          onMouseUp={handleMouseUp}
-          style={{ border: "1px solid black" }}
-        />
-      )}
+        <main
+          style={{
+            flex: 1,
+            padding: "70px",
+            display: "flex",
+            alignItems: "center",
+            flexDirection: "column",
+          }}
+        >
+          {image && (
+            <canvas
+              ref={canvasRef}
+              width={800}
+              height={600}
+              onMouseDown={handleMouseDown}
+              onMouseMove={handleMouseMove}
+              onMouseUp={handleMouseUp}
+              style={{ border: "1px solid black" }}
+            />
+          )}
         </main>
       </div>
     </div>

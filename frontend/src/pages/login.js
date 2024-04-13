@@ -18,7 +18,7 @@ function Login() {
   };
 
   return (
-      <div style={{ maxWidth: '300px', margin: 'auto', padding: '20px', border: '1px solid #ccc', borderRadius: '10px', boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)' }}>
+      <div style={{ maxWidth: '300px', margin: 'auto',marginLeft: '350px', padding: '20px', border: '1px solid #ccc', borderRadius: '10px', boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)' }}>
         <div style={{ marginBottom: '20px', textAlign: 'center' }}>
           <img src={bpgris} alt="Logo" style={{ maxWidth: '70%', height: 'auto' }} />
         </div>

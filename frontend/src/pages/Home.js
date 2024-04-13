@@ -37,7 +37,7 @@ function Home() {
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          borderBottom: "2px solid #ccc",
+          borderBottom: "1px solid #ccc",
         }}
       >
         <div
@@ -61,7 +61,9 @@ function Home() {
               marginRight: "20px",
               textDecoration: "none",
             }}
-          >skip</a>
+          >
+            skip
+          </a>
         </div>
       </header>
       <main
