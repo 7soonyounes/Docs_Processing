@@ -12,28 +12,33 @@ import os
 @csrf_exempt
 def process_image(request):
     if request.method == 'POST':
+        results = []
         try:
-            uploaded_file = request.FILES['image']
             selected_template_name = request.POST.get('template')
             selected_template = Template.objects.get(name=selected_template_name)
-            template_path = os.path.join(settings.BASE_DIR, 'static', 'templates', 'template1.jpeg') 
-            
-            image_data = uploaded_file.read()
-            nparr = np.frombuffer(image_data, np.uint8)
-            image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+            template_path = selected_template.template_path
 
-            aligned_image = align_images(image, template_path) 
-            ocr_results = perform_ocr(aligned_image, selected_template.ocr_locations.all())
+            # Process each image uploaded
+            for uploaded_file in request.FILES.getlist('images'):  # Make sure to use getlist to handle multiple files
+                file_name = uploaded_file.name
+                image_data = uploaded_file.read()
+                nparr = np.frombuffer(image_data, np.uint8)
+                image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
 
-            return JsonResponse({'success': True, 'ocr_results': ocr_results})
-        except KeyError as e:
-            return JsonResponse({'error': str(e)})
-        except Template.DoesNotExist:
-            return JsonResponse({'error': 'Selected template does not exist'})
+                aligned_image = align_images(image, template_path)
+                ocr_results = perform_ocr(aligned_image, selected_template.ocr_locations.all())
+
+                results.append({
+                    'file_name': file_name,
+                    'ocr_results': ocr_results
+                })
+
+            return JsonResponse({'success': True, 'results': results})
+        except Exception as e:
+            return JsonResponse({'error': str(e), 'message': 'An error occurred processing images'})
     else:
         return JsonResponse({'error': 'Invalid request method'})
-
-
+    
 @csrf_exempt
 def save_template(request):
     if request.method == 'POST':
