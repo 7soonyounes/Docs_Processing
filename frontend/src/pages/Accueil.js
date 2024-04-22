@@ -49,7 +49,7 @@ function Accueil() {
             <h2 class="title">PDF Information Extraction</h2>
             <p class="info">Extract specific information from PDF documents and locate them efficiently.</p>
             <button class="button">
-                <span>Get Started</span>
+            <a href="/pdf" class="a">Get Started</a>
                 <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="none">
                     <path d="M0 0h24v24H0V0z" fill="none" />
                     <path d="M16.01 11H4v2h12.01v3L20 12l-3.99-4v3z" fill="currentColor" />

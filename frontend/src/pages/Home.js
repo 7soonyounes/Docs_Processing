@@ -51,20 +51,7 @@ function Home() {
         >
           BCP Technologies
         </div>
-        <div>
-          <a
-            href="/Accueil"
-            style={{
-              color: "#51514f",
-              fontWeight: "bold",
-              marginLeft: "20px",
-              marginRight: "20px",
-              textDecoration: "none",
-            }}
-          >
-            skip
-          </a>
-        </div>
+        
       </header>
       <main
         style={{

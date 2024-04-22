@@ -5,6 +5,7 @@ import Images from './pages/Images';
 import Asidebar from './pages/asidebar';
 import Accueil from './pages/Accueil';
 import AddTemplate from './pages/AddTemplate';
+import Pdf from './pages/Pdf';
 
 
 function App() {
@@ -13,6 +14,7 @@ function App() {
       <Routes>
         <Route exact path="/" element={<Home />} />
         <Route exact path="/images" element={<Images />} />
+        <Route exact path="/pdf" element={<Pdf />} />
         <Route exact path="/asidebar" element={<Asidebar />} />
         <Route exact path="/accueil" element={<Accueil />} />
         <Route exact path="/Addtemplate" element={<AddTemplate />} />

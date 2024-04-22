@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { saveAs } from 'file-saver';
 import "../styles/feature.css";
 
 function Images() {
@@ -50,6 +51,14 @@ function Images() {
 
   const handleDeleteImage = (index) => {
     // Implement image deletion logic
+  };
+
+  const downloadCSV = () => {
+    const header = ["File Name", ...ocrResults[0].ocr_results.map(res => res[0])];
+    const rows = ocrResults.map(result => [result.file_name, ...result.ocr_results.map(res => res[1])]);
+    const csvContent = [header, ...rows].map(row => row.join(',')).join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    saveAs(blob, 'ocr_results.csv');
   };
 
   return (
@@ -111,6 +120,13 @@ function Images() {
                   Process Images
                 </button>
               </li>
+              {ocrResults && ocrResults.length > 0 && (
+                <li style={{ marginBottom: "20px", backgroundColor: "#854e56", padding: "10px", borderRadius: "5px" }}>
+                  <button onClick={downloadCSV} style={{ backgroundColor: "transparent", color: "#fff", border: "none", cursor: "pointer", display: "block", width: "100%", textAlign: "center", fontWeight: "bold", fontSize: "12px" }}>
+                    Download CSV
+                  </button>
+                </li>
+              )}
             </ul>
           </form>
           <div
@@ -142,51 +158,50 @@ function Images() {
           </div>
         </aside>
         <main style={{ flex: 1, padding: "60px", display: "flex", alignItems: "flex-start", flexDirection: "column" }}>
-  {images.length > 0 && (
-    <div style={{ textAlign: "left", color: "#51514f", marginBottom: "20px", width: "100%" }}>
-      <h3>Images</h3>
-      <div style={{ border: "1px solid #51514f", borderRadius: "5px", padding: "8px", maxHeight: "60px", overflowY: "auto", width: "100%", scrollbarWidth: "thin", scrollbarColor: "#51514f transparent" }}>
-  <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
-    {images.map((image, index) => (
-      <li key={index} style={{fontSize : "13px" ,marginBottom: "5px" }}>{image.name}</li>
-    ))}
-  </ul>
-</div>
-    </div>
-  )}
-  {ocrResults && ocrResults.length > 0 && (
-    <div style={{ width: "100%" }}>
-      <h1 style={{ fontWeight: "bold", color: "#854e56" }}>Results</h1>
-      <table style={{ width: "100%", borderCollapse: "collapse", border: "1px solid #ddd", color: "#51514f" }}>
-        <thead style={{ backgroundColor: "#854e56", color: "#fff" }}>
-          <tr>
-            <th style={{ border: "1px solid #51514f", padding: "8px", textAlign: "left" }}>File Name</th>
-            {ocrResults[0].ocr_results.map((res, index) => (
-              <th key={index} style={{ border: "1px solid #51514f", padding: "8px", textAlign: "left" }}>{res[0]}</th>
-            ))}
-            <th style={{ border: "1px solid #51514f", padding: "8px", textAlign: "left" }}></th>
-          </tr>
-        </thead>
-        <tbody>
-          {ocrResults.map((result, index) => (
-            <tr key={index}>
-              <td style={{ border: "1px solid #51514f", padding: "8px" }}>{result.file_name}</td>
-              {result.ocr_results.map((res, resIndex) => (
-                <td key={resIndex} style={{ border: "1px solid #51514f", padding: "8px" }}>{res[1]}</td>
-              ))}
-              <td style={{ border: "1px solid #51514f", padding: "8px", textAlign: "center" }}>
-                <button onClick={() => handleDeleteImage(index)} style={{ backgroundColor: "transparent", color: "#51514f", border: "none", cursor: "pointer", fontWeight: "bold", fontSize: "12px" }}>
-                  Delete
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  )}
-</main>
-
+          {images.length > 0 && (
+            <div style={{ textAlign: "left", color: "#51514f", marginBottom: "20px", width: "100%" }}>
+              <h3>Images</h3>
+              <div style={{ border: "1px solid #51514f", borderRadius: "5px", padding: "8px", maxHeight: "60px", overflowY: "auto", width: "100%", scrollbarWidth: "thin", scrollbarColor: "#51514f transparent" }}>
+                <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
+                  {images.map((image, index) => (
+                    <li key={index} style={{fontSize : "13px" ,marginBottom: "5px" }}>{image.name}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          )}
+          {ocrResults && ocrResults.length > 0 && (
+            <div style={{ width: "100%" }}>
+              <h1 style={{ fontWeight: "bold", color: "#854e56" }}>Results</h1>
+              <table style={{ width: "100%", borderCollapse: "collapse", border: "1px solid #ddd", color: "#51514f" }}>
+                <thead style={{ backgroundColor: "#854e56", color: "#fff" }}>
+                  <tr>
+                    <th style={{ border: "1px solid #51514f", padding: "8px", textAlign: "left" }}>File Name</th>
+                    {ocrResults[0].ocr_results.map((res, index) => (
+                      <th key={index} style={{ border: "1px solid #51514f", padding: "8px", textAlign: "left" }}>{res[0]}</th>
+                    ))}
+                    <th style={{ border: "1px solid #51514f", padding: "8px", textAlign: "left" }}></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {ocrResults.map((result, index) => (
+                    <tr key={index}>
+                      <td style={{ border: "1px solid #51514f", padding: "8px" }}>{result.file_name}</td>
+                      {result.ocr_results.map((res, resIndex) => (
+                        <td key={resIndex} style={{ border: "1px solid #51514f", padding: "8px" }}>{res[1]}</td>
+                      ))}
+                      <td style={{ border: "1px solid #51514f", padding: "8px", textAlign: "center" }}>
+                        <button onClick={() => handleDeleteImage(index)} style={{ backgroundColor: "transparent", color: "#51514f", border: "none", cursor: "pointer", fontWeight: "bold", fontSize: "12px" }}>
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </main>
       </div>
     </div>
   );
