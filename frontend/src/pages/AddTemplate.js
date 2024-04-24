@@ -84,7 +84,12 @@ const AddTemplate = () => {
     ctx.lineWidth = 2;
 
     fields.forEach((field) => {
-      ctx.strokeRect(field.x, field.y, field.w, field.h);
+      ctx.strokeRect(
+        field.x * scaleFactorRef.current,
+        field.y * scaleFactorRef.current,
+        field.w * scaleFactorRef.current,
+        field.h * scaleFactorRef.current
+      );
     });
 
     if (drawing) {
@@ -118,38 +123,21 @@ const AddTemplate = () => {
   const handleMouseDown = (e) => {
     const canvas = canvasRef.current;
     const rect = canvas.getBoundingClientRect();
-    const scaleFactor = scaleFactorRef.current;
-    const x = (e.clientX - rect.left) / scaleFactor;
-    const y = (e.clientY - rect.top) / scaleFactor;
+    const x = (e.clientX - rect.left) / scaleFactorRef.current;
+    const y = (e.clientY - rect.top) / scaleFactorRef.current;
     setStartPos({ x, y });
     setEndPos({ x, y });
     setDrawing(true);
     setCurrentField({ x, y, w: 0, h: 0 });
   };
-
-  const handleMouseMove = (e) => {
-    if (drawing) {
-      const canvas = canvasRef.current;
-      const rect = canvas.getBoundingClientRect();
-      const scaleFactor = scaleFactorRef.current;
-      const x = (e.clientX - rect.left) / scaleFactor;
-      const y = (e.clientY - rect.top) / scaleFactor;
-
-      setEndPos({ x, y });
-
-      const width = Math.abs(x - startPos.x);
-      const height = Math.abs(y - startPos.y);
-
-      setCurrentField({ ...currentField, w: width, h: height });
-    }
-  };
-
+  
   const handleMouseUp = () => {
     if (!drawing || !currentField) return;
     setDrawing(false);
     setFields([
       ...fields,
       {
+        ...currentField,
         x: currentField.x,
         y: currentField.y,
         w: currentField.w,
@@ -158,6 +146,24 @@ const AddTemplate = () => {
     ]);
     setCurrentField(null);
   };
+  
+
+  const handleMouseMove = (e) => {
+    if (drawing) {
+      const canvas = canvasRef.current;
+      const rect = canvas.getBoundingClientRect();
+      const x = (e.clientX - rect.left) / scaleFactorRef.current;
+      const y = (e.clientY - rect.top) / scaleFactorRef.current;
+      
+      setEndPos({ x, y });
+  
+      const width = Math.abs(x - startPos.x);
+      const height = Math.abs(y - startPos.y);
+  
+      setCurrentField({ ...currentField, w: width, h: height });
+    }
+  };
+  
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
@@ -326,8 +332,8 @@ const AddTemplate = () => {
                 <li
                 key={index}
                 style={{
-                  display: 'flex', // This will align items in a row
-                  alignItems: 'center', // This will vertically center align items
+                  display: 'flex', 
+                  alignItems: 'center', 
                   marginBottom: "20px",
                   backgroundColor: "#fff",
                   padding: "10px",
@@ -347,8 +353,8 @@ const AddTemplate = () => {
                     border: "none", 
                     outline: "none", 
                     fontSize: "12px",
-                    flexGrow: 1, // Allows the input to fill space
-                    marginRight: '10px' // Adds some spacing between the input and the button
+                    flexGrow: 1, 
+                    marginRight: '10px'
                   }}
                 />
                 <button 
@@ -357,9 +363,9 @@ const AddTemplate = () => {
                     background: 'none',
                     border: 'none',
                     cursor: 'pointer',
-                    color: '#f26413', // X icon color
+                    color: '#f26413', 
                     fontWeight: 'bold',
-                    fontSize: '16px', // Makes the X larger
+                    fontSize: '12px',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center'

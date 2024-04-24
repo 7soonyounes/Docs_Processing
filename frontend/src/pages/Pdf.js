@@ -17,13 +17,46 @@ function Pdf() {
     setResults(data.results);
   };
 
-  return (
-    <div style={{ backgroundColor: "#E5e5e5", color: "#fff", minHeight: "100vh", display: "flex", flexDirection: "column" }}>
-      <header style={{ backgroundColor: "#fff", padding: "10px", display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid #ccc" }}>
-        <div style={{ fontWeight: "bold", color: "#51514f", fontSize: "17px", marginLeft: "20px" }}>
+  return  (
+    <div
+      style={{
+        backgroundColor: "#51514f",
+        color: "#fff",
+        minHeight: "100vh",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
+      <header
+        style={{
+          backgroundColor: "#fff",
+          padding: "10px",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          borderBottom: "1px solid #ccc",
+        }}
+      >
+        <div
+          style={{
+            fontWeight: "bold",
+            color: "#51514f",
+            fontSize: "17px",
+            marginLeft: "20px",
+          }}
+        >
           BCP Technologies
         </div>
-        <a href="/Accueil" style={{ color: "#51514f", fontWeight: "bold", marginLeft: "20px", marginRight: "20px", textDecoration: "none" }}>
+        <a
+          href="/Accueil"
+          style={{
+            color: "#51514f",
+            fontWeight: "bold",
+            marginLeft: "20px",
+            marginRight: "20px",
+            textDecoration: "none",
+          }}
+        >
           Back
         </a>
       </header>
