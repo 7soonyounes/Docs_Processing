@@ -1,70 +1,115 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
-import { saveAs } from 'file-saver';
+import { saveAs } from "file-saver";
 import "../styles/feature.css";
+import Table from "./table";
+import * as THREE from "three";
+import NET from "vanta/dist/vanta.net.min";
 
 function Images() {
   const [templates, setTemplates] = useState([]);
   const [selectedTemplate, setSelectedTemplate] = useState("");
   const [images, setImages] = useState([]);
   const [ocrResults, setOcrResults] = useState([]);
-
+  const [isProcessHovered, setIsProcessHovered] = useState(false);
+  const [isAddTemplateHovered, setIsAddTemplateHovered] = useState(false);
+  const [isDownloadHovered, setIsDownloadHovered] = useState(false);
+  const vantaRef = useRef(null);
   useEffect(() => {
+    const background = document.getElementById("background");
+
+    if (!vantaRef.current) {
+      vantaRef.current = NET({
+        el: background,
+        THREE: THREE,
+        mouseControls: true,
+        touchControls: true,
+        gyroControls: false,
+        minHeight: 200.0,
+        minWidth: 200.0,
+        scale: 1.0,
+        scaleMobile: 1.0,
+        color: 0xffffff,
+        backgroundColor: 0x51514f,
+        points: 6.0,
+        maxDistance: 19.0,
+        spacing: 17.0,
+      });
+    }
+
     axios
       .get("http://127.0.0.1:8000/api/templates/")
-      .then((response) => {
-        setTemplates(response.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching templates:", error);
-      });
+      .then((response) => setTemplates(response.data))
+      .catch((error) => console.error("Error fetching templates:", error));
+
+    return () => {
+      if (vantaRef.current) {
+        vantaRef.current.destroy();
+        vantaRef.current = null;
+      }
+    };
   }, []);
 
-  const handleTemplateChange = (e) => {
-    setSelectedTemplate(e.target.value);
-  };
+  const handleTemplateChange = (e) => setSelectedTemplate(e.target.value);
 
-  const handleImageChange = (e) => {
-    setImages([...e.target.files]);
-  };
+  const handleImageChange = (e) => setImages([...e.target.files]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData();
-    images.forEach((image, index) => {
-      formData.append("images", image);
-    });
+    images.forEach((image, index) => formData.append("images", image));
     formData.append("template", selectedTemplate);
 
     try {
       const response = await axios.post(
         "http://127.0.0.1:8000/process_image/",
         formData,
-        { headers: { "Content-Type": "multipart/form-data" } }
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
       );
       console.log("Received data:", response.data.results);
       setOcrResults(response.data.results);
+      console.log("Received data:", response.data.results);
     } catch (error) {
       console.error("Error:", error);
     }
   };
 
-  const handleDeleteImage = (index) => {
-    // Implement image deletion logic
-  };
 
   const downloadCSV = () => {
-    const header = ["File Name", ...ocrResults[0].ocr_results.map(res => res[0])];
-    const rows = ocrResults.map(result => [result.file_name, ...result.ocr_results.map(res => res[1])]);
-    const csvContent = [header, ...rows].map(row => row.join(',')).join('\n');
-    const blob = new Blob([csvContent], { type: 'text/csv' });
-    saveAs(blob, 'ocr_results.csv');
+    const header = [
+      "File Name",
+      ...ocrResults[0].ocr_results.map((res) => res[0]),
+    ];
+    const rows = ocrResults.map((result) => [
+      result.file_name,
+      ...result.ocr_results.map((res) => res[1]),
+    ]);
+    const csvContent = [header, ...rows].map((row) => row.join(",")).join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv" });
+    saveAs(blob, "ocr_results.csv");
   };
+
+  const buttonStyle = (hover) => ({
+    backgroundColor: hover ? "#f26413" : "white",
+    color: hover ? "white" : "#51514f",
+    border: `1px solid ${hover ? "#f26413" : "#ccc"}`,
+    cursor: "pointer",
+    display: "block",
+    width: "100%",
+    padding: "10px",
+    textAlign: "center",
+    fontWeight: "normal",
+    fontSize: "12px",
+    borderRadius: "5px",
+    textDecoration: "none",
+  });
 
   return (
     <div
       style={{
-        backgroundColor: "#E5e5e5",
+        backgroundColor: "#51514f",
         color: "#fff",
         minHeight: "100vh",
         display: "flex",
@@ -81,32 +126,64 @@ function Images() {
           borderBottom: "1px solid #ccc",
         }}
       >
-        <div style={{ fontWeight: "bold", color: "#51514f", fontSize: "17px", marginLeft: "20px" }}>
+        <div
+          style={{
+            fontWeight: "bold",
+            color: "#51514f",
+            fontSize: "17px",
+            marginLeft: "20px",
+          }}
+        >
           BCP Technologies
         </div>
-        <a href="/Accueil" style={{ color: "#51514f", fontWeight: "bold", marginLeft: "20px", marginRight: "20px", textDecoration: "none" }}>
-          back
+        <a
+          href="/Accueil"
+          style={{
+            color: "#51514f",
+            fontWeight: "bold",
+            marginLeft: "20px",
+            marginRight: "20px",
+            textDecoration: "none",
+          }}
+        >
+          Back
         </a>
       </header>
       <div style={{ display: "flex", flex: 1 }}>
         <aside
+          id="background"
           style={{
             flex: "0 0 200px",
-            backgroundColor: "#E5e5e5",
+            // backgroundColor: "#51514f",
             padding: "20px",
-            borderRight: "1px solid #ccc",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
+            borderRight: "2px solid #fff !important",
           }}
         >
           <form onSubmit={handleSubmit}>
             <ul style={{ listStyleType: "none", padding: 0 }}>
-              <li style={{ marginBottom: "20px", backgroundColor: "#fff", padding: "10px", borderRadius: "5px" }}>
-                <label htmlFor="image" style={{ backgroundColor: "transparent", color: "#51514f", border: "none", cursor: "pointer", display: "block", width: "100%", textAlign: "center", fontSize: "12px" }}>
+              <li style={{ marginBottom: "20px" }}>
+                <label htmlFor="image" style={buttonStyle(false)}>
                   Upload Images
                 </label>
-                <input type="file" id="image" multiple accept="image/*" onChange={handleImageChange} style={{ display: "none" }} />
+                <input
+                  type="file"
+                  id="image"
+                  multiple
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  style={{ display: "none" }}
+                />
               </li>
-              <li style={{ marginBottom: "20px", backgroundColor: "#fff", padding: "10px", borderRadius: "5px" }}>
-                <select id="template" value={selectedTemplate} onChange={handleTemplateChange} style={{ backgroundColor: "transparent", color: "#51514f", border: "none", cursor: "pointer", display: "block", width: "100%", textAlign: "center", fontSize: "12px" }}>
+              <li style={{ marginBottom: "20px" }}>
+                <select
+                  id="template"
+                  value={selectedTemplate}
+                  onChange={handleTemplateChange}
+                  style={buttonStyle(false)}
+                >
                   <option value="">Select Template</option>
                   {templates.map((template) => (
                     <option key={template.name} value={template.name}>
@@ -115,90 +192,91 @@ function Images() {
                   ))}
                 </select>
               </li>
-              <li style={{ marginBottom: "20px", backgroundColor: "#854e56", padding: "10px", borderRadius: "5px" }}>
-                <button type="submit" style={{ backgroundColor: "transparent", color: "#fff", border: "none", cursor: "pointer", display: "block", width: "100%", textAlign: "center", fontWeight: "bold", fontSize: "12px" }}>
+              <li style={{ marginBottom: "20px" }}>
+                <button
+                  style={buttonStyle(isProcessHovered)}
+                  onMouseEnter={() => setIsProcessHovered(true)}
+                  onMouseLeave={() => setIsProcessHovered(false)}
+                >
                   Process Images
                 </button>
               </li>
-              {ocrResults && ocrResults.length > 0 && (
-                <li style={{ marginBottom: "20px", backgroundColor: "#854e56", padding: "10px", borderRadius: "5px" }}>
-                  <button onClick={downloadCSV} style={{ backgroundColor: "transparent", color: "#fff", border: "none", cursor: "pointer", display: "block", width: "100%", textAlign: "center", fontWeight: "bold", fontSize: "12px" }}>
+              {ocrResults.length > 0 && (
+                <li style={{ marginBottom: "20px" }}>
+                  <button
+                    style={buttonStyle(isDownloadHovered)}
+                    onMouseEnter={() => setIsDownloadHovered(true)}
+                    onMouseLeave={() => setIsDownloadHovered(false)}
+                    onClick={downloadCSV}
+                  >
                     Download CSV
                   </button>
                 </li>
               )}
             </ul>
           </form>
-          <div
-            style={{
-              // marginTop: "auto",
-              backgroundColor: "#854e56",
-              padding: "10px",
-              borderRadius: "5px",
-              marginTop: "400px",
-            }}
-          >
+          <div>
             <a
               href="/Addtemplate"
-              style={{
-                backgroundColor: "transparent",
-                color: "#fff",
-                border: "none",
-                cursor: "pointer",
-                display: "block",
-                width: "100%",
-                textAlign: "center",
-                fontWeight: "bold",
-                textDecoration: "none",
-                fontSize: "12px",
-              }}
+              style={buttonStyle(isAddTemplateHovered)}
+              onMouseEnter={() => setIsAddTemplateHovered(true)}
+              onMouseLeave={() => setIsAddTemplateHovered(false)}
             >
               Add Template
             </a>
           </div>
         </aside>
-        <main style={{ flex: 1, padding: "60px", display: "flex", alignItems: "flex-start", flexDirection: "column" }}>
+        <main
+          style={{
+            flex: 1,
+            padding: "20px",
+            overflowY: "auto",
+            marginLeft: "70px",
+          }}
+        >
           {images.length > 0 && (
-            <div style={{ textAlign: "left", color: "#51514f", marginBottom: "20px", width: "100%" }}>
+            <div
+              style={{
+                textAlign: "left",
+                color: "#fff",
+                marginBottom: "20px",
+                width: "100%",
+              }}
+            >
               <h3>Images</h3>
-              <div style={{ border: "1px solid #51514f", borderRadius: "5px", padding: "8px", maxHeight: "60px", overflowY: "auto", width: "100%", scrollbarWidth: "thin", scrollbarColor: "#51514f transparent" }}>
+              <div
+                style={{
+                  border: "1px solid #fff",
+                  borderRadius: "5px",
+                  padding: "8px",
+                  maxHeight: "60px",
+                  overflowY: "auto",
+                  width: "80%",
+                  scrollbarWidth: "thin",
+                  scrollbarColor: "#fff transparent",
+                }}
+              >
                 <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
                   {images.map((image, index) => (
-                    <li key={index} style={{fontSize : "13px" ,marginBottom: "5px" }}>{image.name}</li>
+                    <li
+                      key={index}
+                      style={{
+                        fontSize: "13px",
+                        marginBottom: "5px",
+                        color: "#fff",
+                      }}
+                    >
+                      {image.name}
+                    </li>
                   ))}
                 </ul>
               </div>
             </div>
           )}
-          {ocrResults && ocrResults.length > 0 && (
+          {ocrResults.length > 0 && (
             <div style={{ width: "100%" }}>
-              <h1 style={{ fontWeight: "bold", color: "#854e56" }}>Results</h1>
-              <table style={{ width: "100%", borderCollapse: "collapse", border: "1px solid #ddd", color: "#51514f" }}>
-                <thead style={{ backgroundColor: "#854e56", color: "#fff" }}>
-                  <tr>
-                    <th style={{ border: "1px solid #51514f", padding: "8px", textAlign: "left" }}>File Name</th>
-                    {ocrResults[0].ocr_results.map((res, index) => (
-                      <th key={index} style={{ border: "1px solid #51514f", padding: "8px", textAlign: "left" }}>{res[0]}</th>
-                    ))}
-                    <th style={{ border: "1px solid #51514f", padding: "8px", textAlign: "left" }}></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {ocrResults.map((result, index) => (
-                    <tr key={index}>
-                      <td style={{ border: "1px solid #51514f", padding: "8px" }}>{result.file_name}</td>
-                      {result.ocr_results.map((res, resIndex) => (
-                        <td key={resIndex} style={{ border: "1px solid #51514f", padding: "8px" }}>{res[1]}</td>
-                      ))}
-                      <td style={{ border: "1px solid #51514f", padding: "8px", textAlign: "center" }}>
-                        <button onClick={() => handleDeleteImage(index)} style={{ backgroundColor: "transparent", color: "#51514f", border: "none", cursor: "pointer", fontWeight: "bold", fontSize: "12px" }}>
-                          Delete
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+              <h3 style={{ fontWeight: "bold", color: "#fff" }}>Results</h3>
+              <Table results={ocrResults} />
             </div>
           )}
         </main>

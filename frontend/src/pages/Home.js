@@ -1,14 +1,43 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import Typed from "typed.js";
 import Login from "./login";
-<link
-  href="https://unpkg.com/css.gg@2.0.0/icons/css/home.css"
-  rel="stylesheet"
-></link>;
+import * as THREE from "three";
+import NET from "vanta/dist/vanta.net.min";
 
 function Home() {
+  const vantaRef = useRef(null);
+
   useEffect(() => {
-    var typed = new Typed(".typed", {
+    const background = document.getElementById('background');
+    if (!vantaRef.current) {
+      vantaRef.current = NET({
+        el: background,
+        THREE: THREE,
+        mouseControls: true,
+        touchControls: true,
+        gyroControls: false,
+        minHeight: 200.00,
+        minWidth: 200.00,
+        scale: 1.00,
+        scaleMobile: 1.00,
+        color: 0xffffff,
+        backgroundColor: 0x51514f,
+        points: 6.00,
+        maxDistance: 19.00,
+        spacing: 17.00
+      });
+    }
+
+    return () => {
+      if (vantaRef.current) {
+        vantaRef.current.destroy();
+        vantaRef.current = null;
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    const typed = new Typed(".typed", {
       strings: ["Images ", "PDFs ", "AI Chatbot ..."],
       typeSpeed: 100,
       backSpeed: 60,
@@ -21,67 +50,69 @@ function Home() {
   }, []);
 
   return (
-    <div
-      style={{
-        backgroundColor: "#E5e5e5",
-        color: "#fff",
-        minHeight: "100vh",
-        display: "flex",
-        flexDirection: "column",
-      }}
-    >
-      <header
+    <div>
+      <div
+        id="background"
         style={{
           backgroundColor: "#fff",
-          padding: "10px",
+          color: "#fff",
+          minHeight: "100vh",
           display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          borderBottom: "1px solid #ccc",
+          flexDirection: "column"
         }}
       >
-        <div
-          class="gg-home"
-          style={{
-            fontWeight: "bold",
-            color: "#51514f",
-            fontSize: "17px",
-            marginLeft: "20px",
-          }}
-        >
-          BCP Technologies
-        </div>
-        
-      </header>
-      <main
-        style={{
-          flex: 1,
-          padding: "40px 70px",
-          display: "flex",
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "space-between",
-          marginTop: "20px",
-        }}
-      >
-        <h1
+        <header
           style={{
             textAlign: "left",
-            fontSize: "3em",
+            fontSize: "1em",
             marginBottom: "20px",
             fontWeight: "bold",
-            color: "#854e56",
+            color: "#fff",
+            marginTop: "20px",
+            marginLeft: "50px",
           }}
         >
-          Docs Processing <br />{" "}
-          <span
-            style={{ fontSize: "35px", color: "#51514f" }}
-            className="typed"
-          ></span>{" "}
-          {/* Use className instead of class */}
-        </h1>
-        <Login /> {/* Render the Login component */}
-      </main>
+          <div
+            className="gg-home"
+            style={{
+              fontWeight: "bold",
+              color: "#fff",
+              fontSize: "17px",
+              marginLeft: "20px",
+            }}
+          >
+            BCP Technologies
+          </div>
+        </header>
+        <main
+          style={{
+            flex: 1,
+            padding: "40px 70px",
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+            marginTop: "20px",
+          }}
+        >
+          <h1
+            style={{
+              textAlign: "left",
+              fontSize: "3em",
+              marginBottom: "20px",
+              fontWeight: "bold",
+              color: "#fff",
+            }}
+          >
+            Docs Processing <br />
+            <span
+              style={{ fontSize: "35px", color: "rgb(255 106 0)" }}
+              className="typed"
+            ></span>
+          </h1>
+          <Login />
+        </main>
+      </div>
     </div>
   );
 }

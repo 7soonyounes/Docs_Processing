@@ -1,292 +1,7 @@
-// import React, { useState, useRef, useEffect } from 'react';
-
-// function AddTemplate() {
-//     const [image, setImage] = useState(null);
-//     const [fields, setFields] = useState([]);
-//     const [drawing, setDrawing] = useState(false);
-//     const [currentField, setCurrentField] = useState(null);
-//     const canvasRef = useRef(null);
-//     const scaleFactorRef = useRef(1); // Ref to store scaling factor
-
-//     useEffect(() => {
-//         if (image && canvasRef.current) {
-//             const canvas = canvasRef.current;
-//             const ctx = canvas.getContext('2d');
-//             const maxCanvasWidth = 800; // Maximum width for the canvas
-//             const maxCanvasHeight = 600; // Maximum height for the canvas
-//             const scaleFactor = Math.min(maxCanvasWidth / image.width, maxCanvasHeight / image.height);
-//             scaleFactorRef.current = scaleFactor; // Store scaling factor in ref
-//             const scaledWidth = image.width * scaleFactor;
-//             const scaledHeight = image.height * scaleFactor;
-//             canvas.width = scaledWidth;
-//             canvas.height = scaledHeight;
-//             ctx.drawImage(image, 0, 0, scaledWidth, scaledHeight);
-
-//             // Draw saved boxes
-//             fields.forEach(field => {
-//                 drawBox(ctx, field);
-//             });
-//         }
-//     }, [image, fields]);
-
-//     const handleImageUpload = (e) => {
-//         const file = e.target.files[0];
-//         const reader = new FileReader();
-
-//         reader.onload = () => {
-//             const img = new Image();
-//             img.onload = () => {
-//                 setImage(img);
-//                 setFields([]); // Reset fields when a new image is uploaded
-//             };
-//             img.src = reader.result;
-//         };
-
-//         if (file) {
-//             reader.readAsDataURL(file);
-//         }
-//     };
-
-//     const drawBox = (ctx, box) => {
-//         const scaleFactor = scaleFactorRef.current;
-//         ctx.strokeStyle = 'red';
-//         ctx.lineWidth = 2;
-//         ctx.strokeRect(box.x * scaleFactor, box.y * scaleFactor, box.w * scaleFactor, box.h * scaleFactor);
-//     };
-
-//     const handleMouseDown = (e) => {
-//         if (!image || !canvasRef.current) return;
-
-//         const rect = canvasRef.current.getBoundingClientRect();
-//         const scaleFactor = scaleFactorRef.current;
-//         const x = (e.clientX ); // Adjust for scaling
-//         const y = (e.clientY ) ; // Adjust for scaling
-//         setCurrentField({ x, y, w: 0, h: 0 });
-//         console.log(currentField,"down")
-//         setDrawing(true);
-//     };
-
-//     const handleMouseMove = (e) => {
-//         if (!drawing || !canvasRef.current || !currentField) return;
-
-//         const rect = canvasRef.current.getBoundingClientRect();
-//         const scaleFactor = scaleFactorRef.current;
-//         const x = (e.clientX - rect.left) / scaleFactor; // Adjust for scaling
-//         const y = (e.clientY - rect.top) / scaleFactor; // Adjust for scaling
-//         const width =   Math.abs( x - currentField.x);
-//         const height = Math.abs(y - currentField.y);
-//         setCurrentField({ ...currentField, w: width, h: height });
-//         console.log(currentField,"move")
-//     };
-
-//     const handleMouseUp = () => {
-//         if (!drawing || !currentField) return;
-
-//         setDrawing(false);
-//         const rect = canvasRef.current.getBoundingClientRect();
-//         const scaleFactor = scaleFactorRef.current;
-//         const x = currentField.x ; // Adjust for scaling
-//         const y = currentField.y; // Adjust for scaling
-//         setFields([...fields, { x, y, w: currentField.w, h: currentField.h }]);
-//         console.log(fields,"fields")
-//         setCurrentField(null);
-//         console.log(currentField,"up")
-//     };
-
-//     const handleDeleteField = (index) => {
-//         const updatedFields = [...fields];
-//         updatedFields.splice(index, 1);
-//         setFields(updatedFields);
-//     };
-
-//     const handleSaveFields = () => {
-//         const formattedData = fields.map(field => [field.name, `(${field.x},${field.y},${field.w},${field.h})`]);
-//         console.log(formattedData);
-//         // Implement saving logic here
-//     };
-
-//     return (
-//         <div>
-//             <input type="file" onChange={handleImageUpload} />
-//             {image && (
-//                 <canvas
-//                     ref={canvasRef}
-//                     // onClick={}
-//                     onMouseDown={handleMouseDown}
-//                     onMouseMove={handleMouseMove}
-//                     onMouseUp={handleMouseUp}
-//                     style={{ border: '1px solid black' }}
-//                 />
-//             )}
-
-//             {fields.map((field, index) => (
-//                 <div key={index}>
-//                     <div>Field Name:</div>
-//                     <input
-//                         type="text"
-//                         placeholder="Field Name"
-//                         value={field.name || ''}
-//                         onChange={(e) => {
-//                             const updatedFields = [...fields];
-//                             updatedFields[index].name = e.target.value;
-//                             setFields(updatedFields);
-//                         }}
-//                     />
-//                     <button onClick={() => handleDeleteField(index)}>Delete</button>
-//                 </div>
-//             ))}
-
-//             <button onClick={handleSaveFields}>Save Fields</button>
-//         </div>
-//     );
-// }
-
-// export default AddTemplate;
-
-// import React, { useState, useRef, useEffect } from 'react';
-
-// const AddTemplate = () => {
-//   const [drawing, setDrawing] = useState(false);
-//   const [startPos, setStartPos] = useState({ x: 0, y: 0 });
-//   const [endPos, setEndPos] = useState({ x: 0, y: 0 });
-//   const canvasRef = useRef(null);
-//   const [image, setImage] = useState(null);
-//   const [fields, setFields] = useState([]);
-//   const [currentField, setCurrentField] = useState(null);
-//   const scaleFactorRef = useRef(1);
-
-//   useEffect(() => {
-//     if (image && canvasRef.current) {
-//     const canvas = canvasRef.current;
-//     const ctx = canvas.getContext('2d');
-//     const maxCanvasWidth = 800; // Maximum width for the canvas
-//     const maxCanvasHeight = 600; // Maximum height for the canvas
-//     const scaleFactor = Math.min(maxCanvasWidth / image.width, maxCanvasHeight / image.height);
-//     scaleFactorRef.current = scaleFactor; // Store scaling factor in ref
-//     const scaledWidth = image.width * scaleFactor;
-//             const scaledHeight = image.height * scaleFactor;
-//             canvas.width = scaledWidth;
-//             canvas.height = scaledHeight;
-//             ctx.drawImage(image, 0, 0, scaledWidth, scaledHeight);
-
-//     const drawRectangle = () => {
-
-//                 ctx.strokeStyle = 'red';
-//                 ctx.lineWidth = 2;
-//       const width = endPos.x - startPos.x;
-//       const height = endPos.y - startPos.y;
-//       ctx.strokeRect(startPos.x, startPos.y, width, height);
-//     };
-
-//     if (drawing) {
-//       drawRectangle();
-//     }
-// }
-//   }, [drawing, startPos, endPos,image, fields]);
-
-//   const handleMouseDown = (e) => {
-//     const canvas = canvasRef.current;
-//     const rect = canvas.getBoundingClientRect();
-//     const x = e.clientX - rect.left;
-//     const y = e.clientY - rect.top;
-//     setStartPos({ x, y });
-//     setEndPos({ x, y });
-//     setDrawing(true);
-//     setCurrentField({ x, y, w: 0, h: 0 });
-//   };
-
-//   const handleMouseMove = (e) => {
-//     if (drawing) {
-//       const canvas = canvasRef.current;
-//       const rect = canvas.getBoundingClientRect();
-//       const x = e.clientX - rect.left;
-//       const y = e.clientY - rect.top;
-//       setEndPos({ x, y });
-//       const width =   Math.abs( x - currentField.x);
-//         const height = Math.abs(y - currentField.y);
-//         setCurrentField({ ...currentField, w: width, h: height });
-//     }
-//   };
-
-//   const handleMouseUp = () => {
-//     if (!drawing || !currentField) return;
-//     setDrawing(false);
-//             setFields([...fields, { x:currentField.x, y:currentField.y, w: currentField.w, h: currentField.h }]);
-//         setCurrentField(null);
-//   };
-
-//       const handleImageUpload = (e) => {
-//         const file = e.target.files[0];
-//         const reader = new FileReader();
-
-//         reader.onload = () => {
-//             const img = new Image();
-//             img.onload = () => {
-//                 setImage(img);
-//                 setFields([]); // Reset fields when a new image is uploaded
-//             };
-//             img.src = reader.result;
-//         };
-
-//         if (file) {
-//             reader.readAsDataURL(file);
-//         }
-//     };
-
-//         const handleDeleteField = (index) => {
-//         const updatedFields = [...fields];
-//         updatedFields.splice(index, 1);
-//         setFields(updatedFields);
-//     };
-
-//     const handleSaveFields = () => {
-//         const formattedData = fields.map(field => [field.name, `(${field.x},${field.y},${field.w},${field.h})`]);
-//         console.log(formattedData);
-//         // Implement saving logic here
-//     };
-
-//   return (
-//     <div>
-//             <input type="file" onChange={handleImageUpload} />
-//             {image && (
-//                   <canvas
-//                   ref={canvasRef}
-//                   width={800}
-//                   height={600}
-//                   onMouseDown={handleMouseDown}
-//                   onMouseMove={handleMouseMove}
-//                   onMouseUp={handleMouseUp}
-//                   style={{ border: '1px solid black'}}
-//                 />
-//             )}
-
-//             {fields.map((field, index) => (
-//                 <div key={index}>
-//                     <div>Field Name:</div>
-//                     <input
-//                         type="text"
-//                         placeholder="Field Name"
-//                         value={field.name || ''}
-//                         onChange={(e) => {
-//                             const updatedFields = [...fields];
-//                             updatedFields[index].name = e.target.value;
-//                             setFields(updatedFields);
-//                         }}
-//                     />
-//                     <button onClick={() => handleDeleteField(index)}>Delete</button>
-//                 </div>
-//             ))}
-
-//             <button onClick={handleSaveFields}>Save Fields</button>
-//         </div>
-//   );
-// };
-
-// export default AddTemplate;
-
-// This keep track of one rect
 import React, { useState, useRef, useEffect } from "react";
 import axios from "axios";
+import * as THREE from "three";
+import NET from "vanta/dist/vanta.net.min";
 
 const AddTemplate = () => {
   const [drawing, setDrawing] = useState(false);
@@ -300,6 +15,39 @@ const AddTemplate = () => {
   const scaleFactorRef = useRef(1);
   const [deleteRec, setDeleteRec] = useState(false);
   const [templateName, setTemplateName] = useState("");
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false); // State for showing success message
+  const [isSaveFieldsHovered, setSaveFieldsHovered] = useState(false);
+
+  const vantaRef = useRef(null);
+  useEffect(() => {
+    const background = document.getElementById("background");
+
+    if (!vantaRef.current) {
+      vantaRef.current = NET({
+        el: background,
+        THREE: THREE,
+        mouseControls: true,
+        touchControls: true,
+        gyroControls: false,
+        minHeight: 200.0,
+        minWidth: 200.0,
+        scale: 1.0,
+        scaleMobile: 1.0,
+        color: 0xffffff,
+        backgroundColor: 0x51514f,
+        points: 6.0,
+        maxDistance: 19.0,
+        spacing: 17.0,
+      });
+    }
+
+    return () => {
+      if (vantaRef.current) {
+        vantaRef.current.destroy();
+        vantaRef.current = null;
+      }
+    };
+  }, []);
 
   useEffect(() => {
     if (image && canvasRef.current) {
@@ -334,65 +82,78 @@ const AddTemplate = () => {
     ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
     ctx.strokeStyle = "#77F857";
     ctx.lineWidth = 2;
-  
-    const scaleFactor = scaleFactorRef.current;
-  
+
     fields.forEach((field) => {
-      ctx.strokeRect(
-        field.x * scaleFactor,
-        field.y * scaleFactor,
-        field.w * scaleFactor,
-        field.h * scaleFactor
-      );
+      ctx.strokeRect(field.x, field.y, field.w, field.h);
     });
-  
+
     if (drawing) {
-      const startX = startPos.x;
-      const startY = startPos.y;
-      const width = Math.abs(endPos.x - startX);
-      const height = Math.abs(endPos.y - startY);
+      const scaleFactor = scaleFactorRef.current;
+      const startX = startPos.x * scaleFactor;
+      const startY = startPos.y * scaleFactor;
+      const endX = endPos.x * scaleFactor;
+      const endY = endPos.y * scaleFactor;
+      const width = Math.abs(endX - startX);
+      const height = Math.abs(endY - startY);
       ctx.strokeRect(startX, startY, width, height);
     }
   };
 
+  const buttonStyle = (hover) => ({
+    backgroundColor: hover ? "#f26413" : "white",
+    color: hover ? "white" : "#51514f",
+    border: `1px solid ${hover ? "#f26413" : "#ccc"}`,
+    cursor: "pointer",
+    display: "block",
+    width: "100%",
+    padding: "10px",
+    textAlign: "center",
+    fontWeight: "normal",
+    fontSize: "12px",
+    borderRadius: "5px",
+    textDecoration: "none",
+  });
+
+
   const handleMouseDown = (e) => {
     const canvas = canvasRef.current;
     const rect = canvas.getBoundingClientRect();
-    const x = (e.clientX - rect.left);
-    const y = (e.clientY - rect.top);
+    const scaleFactor = scaleFactorRef.current;
+    const x = (e.clientX - rect.left) / scaleFactor;
+    const y = (e.clientY - rect.top) / scaleFactor;
     setStartPos({ x, y });
     setEndPos({ x, y });
     setDrawing(true);
     setCurrentField({ x, y, w: 0, h: 0 });
   };
-  
+
   const handleMouseMove = (e) => {
     if (drawing) {
       const canvas = canvasRef.current;
       const rect = canvas.getBoundingClientRect();
-      const x = (e.clientX - rect.left);
-      const y = (e.clientY - rect.top);
-  
+      const scaleFactor = scaleFactorRef.current;
+      const x = (e.clientX - rect.left) / scaleFactor;
+      const y = (e.clientY - rect.top) / scaleFactor;
+
       setEndPos({ x, y });
-  
+
       const width = Math.abs(x - startPos.x);
       const height = Math.abs(y - startPos.y);
-  
+
       setCurrentField({ ...currentField, w: width, h: height });
     }
   };
-  
+
   const handleMouseUp = () => {
     if (!drawing || !currentField) return;
-    const scaleFactor = scaleFactorRef.current;
     setDrawing(false);
     setFields([
       ...fields,
       {
-        x: currentField.x / scaleFactor,
-        y: currentField.y / scaleFactor,
-        w: currentField.w / scaleFactor,
-        h: currentField.h / scaleFactor,
+        x: currentField.x,
+        y: currentField.y,
+        w: currentField.w,
+        h: currentField.h,
       },
     ]);
     setCurrentField(null);
@@ -449,6 +210,7 @@ const AddTemplate = () => {
         }
       );
       console.log("Data saved successfully:", response.data);
+      setShowSuccessMessage(true); // Show success message
     } catch (error) {
       console.error("Error occurred while saving data:", error);
     }
@@ -457,7 +219,7 @@ const AddTemplate = () => {
   return (
     <div
       style={{
-        backgroundColor: "#E5e5e5",
+        backgroundColor: "#51514f",
         color: "#fff",
         minHeight: "100vh",
         display: "flex",
@@ -484,28 +246,30 @@ const AddTemplate = () => {
         >
           BCP Technologies
         </div>
-        <div>
-          <a
-            href="/images"
-            style={{
-              color: "#51514f",
-              fontWeight: "bold",
-              marginLeft: "20px",
-              marginRight: "20px",
-              textDecoration: "none",
-            }}
-          >
-            Images
-          </a>
-        </div>
+        <a
+          href="/Accueil"
+          style={{
+            color: "#51514f",
+            fontWeight: "bold",
+            marginLeft: "20px",
+            marginRight: "20px",
+            textDecoration: "none",
+          }}
+        >
+          Back
+        </a>
       </header>
       <div style={{ display: "flex", flex: 1 }}>
-        <aside
+      <aside
+          id="background"
           style={{
             flex: "0 0 200px",
-            backgroundColor: "#E5e5e5",
+            // backgroundColor: "#51514f",
             padding: "20px",
-            borderRight: "1px solid #ccc",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
+            borderRight: "2px solid #fff !important",
           }}
         >
           <form>
@@ -555,60 +319,83 @@ const AddTemplate = () => {
                   placeholder="Template Name"
                   value={templateName}
                   onChange={(e) => setTemplateName(e.target.value)}
-                  style={{ border: "none", outline: "none", fontSize: "12px", }}
+                  style={{ border: "none", outline: "none", fontSize: "12px" }}
                 />
               </li>
               {fields.map((field, index) => (
                 <li
-                  key={index}
-                  style={{
-                    marginBottom: "20px",
-                    backgroundColor: "#fff",
-                    padding: "10px",
-                    borderRadius: "5px",
-                  }}
-                >
-                 <input
-  type="text"
-  placeholder="Field Name"
-  value={field.name || ""}
-  onChange={(e) => {
-    const updatedFields = [...fields];
-    updatedFields[index].name = e.target.value;
-    setFields(updatedFields);
-  }}
-  style={{ border: 'none', outline: 'none',fontSize: "12px", }}
-/>
-                  <button onClick={() => handleDeleteField(index)}>
-                   Delete
-                  </button>
-                </li>
-              ))}
-              <li
+                key={index}
                 style={{
+                  display: 'flex', // This will align items in a row
+                  alignItems: 'center', // This will vertically center align items
                   marginBottom: "20px",
-                  backgroundColor: "#854e56",
+                  backgroundColor: "#fff",
                   padding: "10px",
                   borderRadius: "5px",
                 }}
               >
+                <input
+                  type="text"
+                  placeholder="Field Name"
+                  value={field.name || ""}
+                  onChange={(e) => {
+                    const updatedFields = [...fields];
+                    updatedFields[index].name = e.target.value;
+                    setFields(updatedFields);
+                  }}
+                  style={{ 
+                    border: "none", 
+                    outline: "none", 
+                    fontSize: "12px",
+                    flexGrow: 1, // Allows the input to fill space
+                    marginRight: '10px' // Adds some spacing between the input and the button
+                  }}
+                />
+                <button 
+                  onClick={() => handleDeleteField(index)}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    color: '#f26413', // X icon color
+                    fontWeight: 'bold',
+                    fontSize: '16px', // Makes the X larger
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
+                  aria-label="Delete field"
+                >
+                  &#x2715; {/* Unicode character for X */}
+                </button>
+              </li>
+              
+              ))}
+              <li
+                style={{ marginBottom: "20px" }}
+              >
                 <button
                   onClick={handleSaveFields}
-                  style={{
-                    backgroundColor: "transparent",
-                    color: "#fff",
-                    border: "none",
-                    cursor: "pointer",
-                    display: "block",
-                    width: "100%",
-                    textAlign: "center",
-                    fontWeight: "bold",
-                    fontSize: "12px",
-                  }}
+                  style={buttonStyle(isSaveFieldsHovered)}
+                  onMouseEnter={() => setSaveFieldsHovered(true)}
+                  onMouseLeave={() => setSaveFieldsHovered(false)}
                 >
                   Save Fields
                 </button>
               </li>
+              {showSuccessMessage && (
+                <li
+                  style={{
+                    marginBottom: "20px",
+                    backgroundColor: "#77F857",
+                    padding: "10px",
+                    borderRadius: "5px",
+                    color: "#fff",
+                  }}
+                >
+                  saved successfully
+                </li>
+              )}
             </ul>
           </form>
         </aside>

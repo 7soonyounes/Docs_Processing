@@ -48,20 +48,20 @@ def process_image(request):
         image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
 
         if image is None:
-            continue  # Skip if image can't be decoded
+            continue 
 
         aligned_image = align_images(image, template_path)
         ocr_locations = selected_template.ocr_locations.all()
         if not ocr_locations.exists():
-            continue  # Skip OCR if no locations are available
+            continue  
 
         ocr_results = perform_ocr(aligned_image, ocr_locations)
         if not ocr_results:
-            continue  # Check if OCR results are empty or not
+            continue  
 
         results.append({
             'file_name': file_name,
-            'ocr_results': [result for result in ocr_results if result]  # Ensure non-empty results are appended
+            'ocr_results': [result for result in ocr_results if result]  
         })
 
     return JsonResponse({'success': True, 'results': results})

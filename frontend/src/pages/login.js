@@ -1,10 +1,23 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import bpgris from '../assets/bpgris.png';
+import bpgris from '../assets/bcplogo.png';
 
 function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [isHovered, setIsHovered] = useState(false);
+
+  const buttonStyle = {
+    width: '100%',
+    padding: '10px',
+    backgroundColor: isHovered ? '#f26413' : '#51514f',
+    fontSize: '1em',
+    fontWeight: 'bold',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '8px',
+    cursor: 'pointer'
+  };
 
   const handleUsernameChange = (event) => {
     setUsername(event.target.value);
@@ -33,15 +46,14 @@ function Login() {
   };
 
   return (
-    <div style={{ maxWidth: '300px', margin: 'auto',marginLeft: '450px', padding: '20px', border: '1px solid #ccc', borderRadius: '10px', boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)' }}>
+    <div style={{ background: '#fff', maxWidth: '300px', margin: 'auto',marginLeft: '450px', padding: '20px', border: '1px solid #ccc', borderRadius: '10px', boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)' }}>
       <div style={{ marginBottom: '20px', textAlign: 'center' }}>
-        <img src={bpgris} alt="Logo" style={{ maxWidth: '70%', height: 'auto' }} />
+        <img src={bpgris} alt="Logo" style={{ maxWidth: '45%', height: 'auto' }} />
       </div>
       <div>
-        <h2 style={{ textAlign: 'center' }}></h2>
         <form onSubmit={handleSubmit}>
           <div style={{ marginBottom: '15px' }}>
-            <label htmlFor="username" style={{ display: 'block', marginBottom: '5px', fontSize: '1em', fontWeight: 'bold', color :'#51514f' }}>Username</label>
+            <label htmlFor="username" style={{ display: 'block', marginBottom: '5px', fontSize: '1em', color :'#51514f' }}>Username</label>
             <input
               type="text"
               id="username"
@@ -52,7 +64,7 @@ function Login() {
             />
           </div>
           <div style={{ marginBottom: '15px' }}>
-            <label htmlFor="password" style={{ display: 'block', marginBottom: '5px', fontSize: '1em', fontWeight: 'bold', color :'#51514f' }}>Password</label>
+            <label htmlFor="password" style={{ display: 'block', marginBottom: '5px', fontSize: '1em', color :'#51514f' }}>Password</label>
             <input
               type="password"
               id="password"
@@ -62,7 +74,14 @@ function Login() {
               style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #ccc', boxSizing: 'border-box' }}
             />
           </div>
-          <button type="submit" style={{ width: '100%', padding: '10px', backgroundColor: '#51514f', fontSize: '1em', fontWeight: 'bold', color :'#fff', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>Login</button>
+          <button
+  type="submit"
+  style={buttonStyle}
+  onMouseEnter={() => setIsHovered(true)}
+  onMouseLeave={() => setIsHovered(false)}
+>
+  Login
+</button>
         </form>
       </div>
     </div>
